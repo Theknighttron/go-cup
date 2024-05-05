@@ -12,7 +12,12 @@ func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		log.Println("Hello, world!!")
 
-		data, _ := io.ReadAll(r.Body)
+		data, err := io.ReadAll(r.Body)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("An error occured"))
+			return
+		}
 		log.Printf("Data %s\n", data)
 
 		// write back to the user
