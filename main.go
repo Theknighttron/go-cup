@@ -1,10 +1,20 @@
 package main
 
 import (
+	"log"
 	"net/http"
+	"os"
+    "github.com/polyhistor2050/microservices/handlers"
 )
 
 func main() {
+    l := log.New(os.Stdout, "product-api", log.LstdFlags)
+    hh := handlers.NewHello(l)
+    gh := handlers.NewGoodbye(l)
 
-	http.ListenAndServe(":8080", nil)
+    sm := http.NewServeMux()
+    sm.Handle("/", hh)
+    sm.Handle("/goodbye", gh)
+
+	http.ListenAndServe(":8080", sm)
 }
