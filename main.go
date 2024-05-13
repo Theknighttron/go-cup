@@ -1,9 +1,11 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"time"
 
 	"github.com/polyhistor2050/microservices/handlers"
@@ -26,6 +28,24 @@ func main() {
         WriteTimeout: 1*time.Second,
     }
 
-    svr.ListenAndServe()
+    go func ()  {
+        err := svr.ListenAndServe()
+        if err != nil {
+            l.Fatal(err)
+        }
+    }()
+
+    // Successfully terminate the server
+    sigChan := make(chan os.Signal)
+    signal.Notify(sigChan, os.Interrupt)
+    signal.Notify(sigChan, os.Kill)
+
+    sig := <- sigChan
+    l.Println("Recieved terminate, graceful shutdown", sig)
+
+    tc, _ := context.WithTimeout(context.Background(), 30 * time.Second)
+    svr.Shutdown(tc)
 
 }
+
+
