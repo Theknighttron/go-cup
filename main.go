@@ -4,7 +4,9 @@ import (
 	"log"
 	"net/http"
 	"os"
-    "github.com/polyhistor2050/microservices/handlers"
+	"time"
+
+	"github.com/polyhistor2050/microservices/handlers"
 )
 
 func main() {
@@ -16,5 +18,14 @@ func main() {
     sm.Handle("/", hh)
     sm.Handle("/goodbye", gh)
 
-	http.ListenAndServe(":8080", sm)
+    svr := &http.Server{
+        Addr: ":8080",
+        Handler: sm,
+        IdleTimeout: 120*time.Second,
+        ReadTimeout: 1*time.Second,
+        WriteTimeout: 1*time.Second,
+    }
+
+    svr.ListenAndServe()
+
 }
