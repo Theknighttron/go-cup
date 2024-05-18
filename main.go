@@ -13,12 +13,10 @@ import (
 
 func main() {
     l := log.New(os.Stdout, "product-api", log.LstdFlags)
-    hh := handlers.NewHello(l)
-    gh := handlers.NewGoodbye(l)
+    ph := handlers.NewProduct(l)
 
     sm := http.NewServeMux()
-    sm.Handle("/", hh)
-    sm.Handle("/goodbye", gh)
+    sm.Handle("/", ph)
 
     svr := &http.Server{
         Addr: ":8080",
@@ -29,9 +27,12 @@ func main() {
     }
 
     go func ()  {
+        l.Println("\nServer is running on port 8080")
+
         err := svr.ListenAndServe()
         if err != nil {
-            l.Fatal(err)
+            l.Printf("Error starting server: %s\n", err)
+            os.Exit(1)
         }
     }()
 
