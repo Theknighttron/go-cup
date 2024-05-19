@@ -44,4 +44,13 @@ func (p *Products) getProducts(rw http.ResponseWriter, r *http.Request) {
 func (p *Products) addProducts(rw http.ResponseWriter, r *http.Request) {
     p.l.Println("Handle POST products")
 
+
+    prod := &data.Product{}
+    err := prod.FromJSON(r.Body)
+    if err != nil {
+        http.Error(rw, "Unable to unmarshar json", http.StatusBadRequest)
+    }
+
+    p.l.Printf("Product: %#v", prod)
+
 }
